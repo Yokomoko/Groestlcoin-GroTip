@@ -10,29 +10,24 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using TipBot_BL.DiscordCommands;
 using TipBot_BL.POCO;
 using TipBot_BL.Properties;
 using TipBot_BL.QT;
 
 
 namespace TipBot_BL {
-    public class DiscordClientNew{
+    public class DiscordClientNew {
         public string ApiKey => Settings.Default.DiscordToken;
         public ulong ChannelId;
 
         private const string CommandPrefix = "-";
-
+        private const string TickerPrefix = "$";
         private System.Timers.Timer timer;
 
         public static DiscordSocketClient _client;
         private CommandService _commands;
         private IServiceProvider _services;
-
-        public DiscordClientNew() {
-        }
-
-
-
 
 
         public async void RunBotAsync() {
@@ -43,7 +38,7 @@ namespace TipBot_BL {
             _client.Log += LogAsync;
 
             timer = new System.Timers.Timer {
-                Interval = 2500,
+                Interval = 1000,
                 AutoReset = false
             };
 
@@ -53,6 +48,8 @@ namespace TipBot_BL {
 
             await _client.LoginAsync(TokenType.Bot, ApiKey);
             await _client.StartAsync();
+
+
 
             await Task.Delay(-1);
         }
@@ -67,12 +64,15 @@ namespace TipBot_BL {
             //await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
             await _commands.AddModulesAsync(typeof(DiscordCommands.TipModule).Assembly);
             await _commands.AddModulesAsync(typeof(DiscordCommands.TickerModule).Assembly);
+            await _commands.AddModulesAsync(typeof(TextModule).Assembly);
         }
 
 
 
 
         private async Task ClientOnMessageReceived(SocketMessage socketMessage) {
+            await _client.CurrentUser.ModifyAsync(x => x.Username = "GroTip");
+
             var message = socketMessage as SocketUserMessage;
             if (message == null || message.Author.IsBot) {
                 return;
@@ -92,7 +92,18 @@ namespace TipBot_BL {
                 if (!result.IsSuccess) {
                     Console.WriteLine(result.ErrorReason);
                 }
+            }
+            else if (message.HasStringPrefix(TickerPrefix, ref argPos)){
+                if (message.Channel.Id != Settings.Default.PriceCheckChannel){
 
+                    await message.Channel.SendMessageAsync($"Please use the <#{Settings.Default.PriceCheckChannel}> channel!");
+                    return;
+                }
+
+                var msg = message.ToString().Split('$').Last();
+                var tModule = new TickerModule();
+                var embed = await tModule.GetPriceEmbed(msg);
+                await message.Channel.SendMessageAsync("", false, embed);
             }
         }
     }

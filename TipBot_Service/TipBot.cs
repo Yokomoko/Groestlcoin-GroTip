@@ -26,8 +26,11 @@ namespace TipBot_Service {
         }
 
         private void StartService() {
-            var discordClient = new DiscordClientNew(); //Discord Token
+            var discordClient = new DiscordClientNew();
+        //    System.Threading.Thread.Sleep(120);
             discordClient.RunBotAsync();
+            
+
         }
     }
 }

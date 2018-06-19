@@ -47,33 +47,38 @@ namespace TipBot_BL.DiscordCommands {
 
         [Command("optallin")]
         public async Task OptAllIn() {
-            if (Context?.Guild.Users != null && Context?.Guild != null && Context.Guild.Users.FirstOrDefault().GuildPermissions.Administrator) {
-                var ra = Context.Guild.Users.Where(d => d.Status != UserStatus.Offline && !d.IsBot);
+            if (DiscordClientNew._client != null) {
+                var id = DiscordClientNew._client.Guilds.FirstOrDefault(d => Context.Guild != null && d.Id == Context.Guild.Id)?.Users.FirstOrDefault(d => d.Id == Context.User.Id);
 
-                var optInCount = 0;
-
-                foreach (var socketGuildUser in ra) {
-                    try {
-                        if (!socketGuildUser.Roles.Contains(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rain"))) {
-                            Context.Guild.Users.FirstOrDefault(d => d.Id == socketGuildUser.Id)?.AddRoleAsync(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rain"));
-                            //await socketGuildUser.SendMessageAsync("hello");
-                            await socketGuildUser.GetOrCreateDMChannelAsync(Discord.RequestOptions.Default).Result.SendMessageAsync("You've been automatically opted in to receive free GRS! To opt out, write `-optout` in the Groestlcoin Discord Tipbot channel");
-                            Console.WriteLine($"Opted in {socketGuildUser.Username}");
-                            optInCount++;
-                        }
-                    }
-                    catch {
-                        Console.WriteLine("Unable to send");
+                if (id != null) {
+                    if (!id.GuildPermissions.Administrator) {
+                        return;
                     }
                 }
+            }
+            var ra = Context.Guild.Users.Where(d => d.Status != UserStatus.Offline && !d.IsBot);
 
-                if (optInCount > 0) {
-                    await ReplyAsync($"Opted {optInCount} users in");
-                }
-                else {
-                    await ReplyAsync("No more users to opt in.");
-                }
+            var optInCount = 0;
 
+            foreach (var socketGuildUser in ra) {
+                try {
+                    if (!socketGuildUser.Roles.Contains(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains"))) {
+                        Context.Guild.Users.FirstOrDefault(d => d.Id == socketGuildUser.Id)?.AddRoleAsync(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains"));
+                        //await socketGuildUser.SendMessageAsync("hello");
+                        await socketGuildUser.GetOrCreateDMChannelAsync(Discord.RequestOptions.Default).Result.SendMessageAsync("You've been automatically opted in to receive free GRS! To opt out, write `-optout` in the Groestlcoin Discord Tipbot channel");
+                        Console.WriteLine($"Opted in {socketGuildUser.Username}");
+                        optInCount++;
+                    }
+                }
+                catch {
+                    Console.WriteLine("Unable to send");
+                }
+            }
+            if (optInCount > 0) {
+                await ReplyAsync($"Opted {optInCount} users in");
+            }
+            else {
+                await ReplyAsync("No more users to opt in.");
             }
         }
 
@@ -95,13 +100,13 @@ namespace TipBot_BL.DiscordCommands {
 
         [Command("optin")]
         public async Task OptIn() {
-            Context.Guild.Users.FirstOrDefault(d => d.Id == Context.User.Id)?.AddRoleAsync(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rain"));
+            Context.Guild.Users.FirstOrDefault(d => d.Id == Context.User.Id)?.AddRoleAsync(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains"));
             await ReplyAsync($"You have opted in to rains! You now have a chance to receive free {BaseCurrency}");
         }
 
         [Command("optout")]
         public async Task OptOut() {
-            Context.Guild.Users.FirstOrDefault(d => d.Id == Context.User.Id)?.RemoveRoleAsync(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rain"));
+            Context.Guild.Users.FirstOrDefault(d => d.Id == Context.User.Id)?.RemoveRoleAsync(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains"));
             await ReplyAsync("You have opted out of rains :(");
         }
 
@@ -190,7 +195,7 @@ namespace TipBot_BL.DiscordCommands {
         public async Task Rain(string amount, string numberOfPeople) {
             int people;
             if (int.TryParse(numberOfPeople, out people)) {
-                var role = Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rain");
+                var role = Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains");
                 var ra = Context.Guild.Users.Where(d => d.Roles.Contains(role));
 
                 var selectedUsers = ra.OrderBy(arg => Guid.NewGuid()).Where(d => d.Id != Context.User.Id).Take(people).ToList();
@@ -211,7 +216,7 @@ namespace TipBot_BL.DiscordCommands {
 
         [Command("rain")]
         public async Task Rain(string amount) {
-            var role = Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rain");
+            var role = Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains");
 
 
             var ra = Context.Guild.Users.Where(d => d.Roles.Contains(role));
@@ -317,10 +322,7 @@ namespace TipBot_BL.DiscordCommands {
                                     message = $"Unlucky {Context.User.Mention}, you lost :(";
                                 }
                                 embed.WithFooter($"Developed by Yokomoko (FYoKoGrSXGpTavNFVbvW18UYxo6JVbUDDa)");
-                                var reply = await ReplyAsync(message, false, embed);
-                                var emoji = new Emoji(coin == coinSide ? "🎉" : "😭");
-                                await reply.AddReactionAsync(emoji);
-
+                                await ReplyAsync(message, false, embed);
 
                                 Console.WriteLine($"{Context.User.Id} ({Context.User.Username}) bet on {side} and flipped {coin}");
                             }
@@ -348,13 +350,13 @@ namespace TipBot_BL.DiscordCommands {
         private string SendRain(SocketUser fromUser, List<SocketGuildUser> tipUsers, decimal amount) {
             if (QTCommands.CheckBalance(fromUser.Id, amount)) {
                 foreach (var person in tipUsers) {
-                    QTCommands.SendTip(Context.User.Id, person.Id, amount / tipUsers.Count);
+                    QTCommands.SendTip(Context.User.Id, person.Id, Math.Round(amount / tipUsers.Count, 7));
                 }
                 var mentionList = new List<string>();
                 foreach (var users in tipUsers) {
                     mentionList.Add($"{DiscordClientNew._client.GetUser(users.Id).Mention}");
                 }
-                return $"{fromUser.Mention} made it rain :cloud_rain:! Congratulations to {(mentionList.Count == 2 ? string.Join(" and ", mentionList) : string.Join(", ", mentionList))} who {(mentionList.Count > 1 ? "have" : "has")} been awarded {amount / mentionList.Count} {BaseCurrency} {(mentionList.Count > 1 ? "each" : "")}";
+                return $"{fromUser.Mention} made it rain :cloud_rain:! Congratulations to {(mentionList.Count == 2 ? string.Join(" and ", mentionList) : string.Join(", ", mentionList))} who {(mentionList.Count > 1 ? "have" : "has")} been awarded {Math.Round(amount / mentionList.Count, 7)} {BaseCurrency} {(mentionList.Count > 1 ? "each" : "")}";
             }
             return "You do not have enough balance to perform this rain";
         }

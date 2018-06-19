@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoinMarketCap, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CoinMarketCap-API.1.0.4\lib\netstandard1.1\CoinMarketCap.dll</HintPath>
+    <Reference Include="CoinMarketCap, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CoinMarketCap-API.1.1.1\lib\netstandard1.1\CoinMarketCap.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CryptoCompare, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
@@ -129,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiscordClientNew.cs" />
+    <Compile Include="DiscordCommands\TextModule.cs" />
     <Compile Include="DiscordCommands\TickerModule.cs" />
     <Compile Include="DiscordCommands\TipModule.cs" />
     <Compile Include="Interfaces\Users.cs" />
@@ -152,9 +153,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="printer.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

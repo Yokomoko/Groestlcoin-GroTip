@@ -13,7 +13,9 @@ using QRCoder;
 using TipBot_BL.POCO;
 using System.Drawing;
 using System.Drawing.Printing;
+using CoinMarketCap.Models;
 using CryptoCompare;
+using TipBot_BL.Properties;
 using TipBot_BL.QT;
 using Color = System.Drawing.Color;
 
@@ -24,37 +26,59 @@ namespace TipBot_BL.DiscordCommands {
         private static readonly IEnumerable<string> convertToTickers = new List<string> { "BTC", "ETH", "USD" };
 
 
-        private decimal CalculatePercentDifference(double basePrice, double changePrice) {
-            return (decimal)(100 * changePrice / basePrice - 100);
-        }
-
         [Command("price")]
         public async Task GetPrice(string ticker) {
-            var exchanges = await priceClient.Exchanges.ListAsync();
-
-            ticker = ticker.ToUpper().Trim();
-
-            var prices = await priceClient.Prices.SingleAsync(ticker, convertToTickers);
-
-            //Get Coin Details
-            var details = await priceClient.Coins.ListAsync();
-            var coinDetails = details.Coins.FirstOrDefault(d => d.Value.Name == ticker);
-
-            var emb = new EmbedBuilder();
-            emb.Title = $"Price of {coinDetails.Value.FullName}";
-
-            foreach (var price in prices){
-                emb.AddField(price.Key, $"{price.Value}");
+            if (Context.Channel.Id != Settings.Default.PriceCheckChannel) {
+                await ReplyAsync($"Please use the <#{Settings.Default.PriceCheckChannel}> channel!");
+                return;
             }
-            emb.AddField("Changes", "");
-
-            emb.Color = Discord.Color.DarkBlue;
-            emb.WithThumbnailUrl("https://www.cryptocompare.com" + coinDetails.Value.ImageUrl);
-            emb.Url = "https://www.cryptocompare.com" + coinDetails.Value.Url;
-            emb.WithFooter($"{Context.Guild.CurrentUser.Nickname} - Developed by Yokomoko");
-
-            await ReplyAsync("", false, emb);
+            var embed = await GetPriceEmbed(ticker);
+            await ReplyAsync("", false, embed);
         }
+
+        public async Task<Embed> GetPriceEmbed(string ticker) {
+            var tickerFormatted = ticker.ToUpper().Trim();
+
+            var listings = await priceClientNew.GetListingsAsync();
+            var listingSingle = listings.Data.FirstOrDefault(d => d.Symbol == tickerFormatted);
+
+            if (listingSingle != null) {
+                var tickerResponse = await priceClientNew.GetTickerAsync((int)listingSingle.Id, "BTC");
+                var emb = new EmbedBuilder();
+                emb.WithTitle($"Price of {listingSingle.Name} [{tickerFormatted}]");
+                var sb = new StringBuilder();
+                sb.AppendLine($"**Rank:** {tickerResponse.Data.Rank}");
+                sb.Append(Environment.NewLine);
+
+                foreach (var quote in tickerResponse.Data.Quotes) {
+                    if (quote.Key == "USD") {
+                        sb.AppendLine("**Price " + quote.Key + ":** " + "$" + Math.Round(quote.Value.Price.GetValueOrDefault(0), 2));
+                    }
+                    else {
+                        sb.AppendLine("**Price " + quote.Key + ":** " + Math.Round(quote.Value.Price.GetValueOrDefault(0), 8) + " " + quote.Key);
+                    }
+                }
+
+                sb.Append(Environment.NewLine);
+                sb.AppendLine($"**Market Cap: **${tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.MarketCap:n}");
+                sb.AppendLine($"**24h volume: **${tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.Volume24H:n}");
+                sb.AppendLine($"**Supply: **${tickerResponse.Data.TotalSupply:n}");
+                sb.Append(Environment.NewLine);
+                sb.AppendLine($"**Change 1h: **{tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.PercentChange1H:n}%");
+                sb.AppendLine($"**Change 24h: **{tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.PercentChange24H:n}%");
+                sb.AppendLine($"**Change 7 days: **{tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.PercentChange7D:n}%");
+
+                emb.WithDescription(sb.ToString());
+                emb.WithUrl($"https://coinmarketcap.com/currencies/{tickerResponse.Data.Name}/");
+                emb.ThumbnailUrl = $"https://s2.coinmarketcap.com/static/img/coins/32x32/{listingSingle.Id}.png";
+
+                emb.WithFooter("GroTip Price Checker Bot | By Yokomoko");
+                return emb;
+            }
+            return null;
+        }
+
+
 
     }
 }

@@ -8,5 +8,11 @@
     <Setting Name="DiscordToken" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="PriceCheckChannel" Type="System.UInt64" Scope="User">
+      <Value Profile="(Default)">457228636303654912</Value>
+    </Setting>
+    <Setting Name="NextRelease" Type="System.DateTime" Scope="User">
+      <Value Profile="(Default)">06/22/2018 21:00:00</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -46,5 +46,29 @@ namespace TipBot_BL.Properties {
                 this["DiscordToken"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("457228636303654912")]
+        public ulong PriceCheckChannel {
+            get {
+                return ((ulong)(this["PriceCheckChannel"]));
+            }
+            set {
+                this["PriceCheckChannel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("06/22/2018 21:00:00")]
+        public global::System.DateTime NextRelease {
+            get {
+                return ((global::System.DateTime)(this["NextRelease"]));
+            }
+            set {
+                this["NextRelease"] = value;
+            }
+        }
     }
 }
