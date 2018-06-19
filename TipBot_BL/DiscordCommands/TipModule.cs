@@ -418,8 +418,8 @@ namespace TipBot_BL.DiscordCommands {
 
         private string SendRain(SocketUser fromUser, List<SocketGuildUser> tipUsers, decimal amount) {
             if (QTCommands.CheckBalance(fromUser.Id, amount)) {
-                if (amount / tipUsers.Count <= (decimal)0.01) {
-                    return $"Rain amount must be more than 0.01 {BaseCurrency} each";
+                if (amount / tipUsers.Count < (decimal)0.01) {
+                    return $"Rain amount must be at least 0.01 {BaseCurrency} per person";
                 }
                 foreach (var person in tipUsers) {
                     QTCommands.SendTip(Context.User.Id, person.Id, Math.Round(amount / tipUsers.Count, 7));
