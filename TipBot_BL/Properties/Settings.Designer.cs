@@ -70,5 +70,17 @@ namespace TipBot_BL.Properties {
                 this["NextRelease"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("457229141033484288")]
+        public ulong TipBotChannel {
+            get {
+                return ((ulong)(this["TipBotChannel"]));
+            }
+            set {
+                this["TipBotChannel"] = value;
+            }
+        }
     }
 }

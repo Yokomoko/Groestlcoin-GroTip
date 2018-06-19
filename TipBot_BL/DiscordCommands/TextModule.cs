@@ -102,6 +102,11 @@ namespace TipBot_BL.DiscordCommands {
         //    }
         //}
 
+        [Command("ping")]
+        public async Task PingAsync() {
+            await ReplyAsync("Pong!");
+        }
+
         [Command("commands")]
         public async Task Commands() {
             var embed = new EmbedBuilder();
