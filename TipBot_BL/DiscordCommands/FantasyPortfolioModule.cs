@@ -182,7 +182,7 @@ namespace TipBot_BL.DiscordCommands {
             return players;
         }
 
-        public static Embed GetLeaderboardEmbed() {
+        public static EmbedBuilder GetLeaderboardEmbed() {
             using (var context = new FantasyPortfolio_DBEntities()) {
                 List<Players> players = GetPlayers(context);
 

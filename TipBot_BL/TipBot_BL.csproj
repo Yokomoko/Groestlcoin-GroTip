@@ -172,6 +172,7 @@
     </Compile>
     <Compile Include="FantasyPortfolio\Entities\Rounds.cs" />
     <Compile Include="Interfaces\Users.cs" />
+    <Compile Include="Preferences.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -179,7 +180,6 @@
     </Compile>
     <Compile Include="QT\QtResponse.cs" />
     <Compile Include="TelegramClient.cs" />
-    <Compile Include="DiscordClient.cs" />
     <Compile Include="GroestlJson.cs" />
     <Compile Include="POCO\DiscordUsers.cs" />
     <Compile Include="POCO\TelegramUsers.cs" />

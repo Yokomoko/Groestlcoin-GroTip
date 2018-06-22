@@ -81,8 +81,9 @@ namespace TipBot_BL {
             var winner = FantasyPortfolioModule.GetWinner();
             var additionalText = "";
 
-            if (FantasyPortfolioModule.GetPlayers(new FantasyPortfolio_DBEntities()).Any()) {
-                if (Round.CurrentRoundEnd <= DateTime.Now) {
+
+            if (Round.CurrentRoundEnd <= DateTime.Now) {
+                if (FantasyPortfolioModule.GetPlayers(new FantasyPortfolio_DBEntities()).Any()) {
                     if (FantasyPortfolioModule.PrizePool > 0) {
                         additionalText = $"Congratulations <@{winner.UserId}>! You have won the fantasy portfolio and won {FantasyPortfolioModule.PrizePool} {Preferences.BaseCurrency}";
                         QTCommands.SendTip(_client.CurrentUser.Id, ulong.Parse(winner.UserId), FantasyPortfolioModule.PrizePool);
@@ -91,16 +92,15 @@ namespace TipBot_BL {
                         additionalText = $"Congratulations <@{winner.UserId}>! You have won the fantasy portfolio! There was no prize.";
                     }
                 }
+                else {
+                    embed.WithDescription("Round has finished! There were no participants in this round, so nobody wins!");
+                }
+                using (var context = new FantasyPortfolio_DBEntities()) {
+                    Round round = new Round { RoundEnds = DateTime.Now.AddMinutes(Round.RoundDurationDays) };
+                    context.Rounds.Add(round);
+                    context.SaveChanges();
+                }
             }
-            else {
-                additionalText = "There were no participants in this round :-(";
-            }
-            using (var context = new FantasyPortfolio_DBEntities()) {
-                Round round = new Round { RoundEnds = DateTime.Now.AddMinutes(Round.RoundDurationDays) };
-                context.Rounds.Add(round);
-                context.SaveChanges();
-            }
-
             _client.GetGuild(Settings.Default.GuildId).GetTextChannel(Settings.Default.FantasyChannel).SendMessageAsync(additionalText, false, embed);
         }
 
