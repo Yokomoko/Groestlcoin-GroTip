@@ -55,6 +55,14 @@
       <HintPath>..\packages\Discord.Net.WebSocket.1.0.2\lib\net45\Discord.Net.WebSocket.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="LiteDB, Version=4.1.4.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
       <HintPath>..\packages\LiteDB.4.1.4\lib\net40\LiteDB.dll</HintPath>
       <Private>True</Private>
@@ -81,6 +89,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Interactive.Async, Version=3.0.1000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
@@ -97,6 +106,8 @@
       <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Security.Cryptography.Algorithms, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net461\System.Security.Cryptography.Algorithms.dll</HintPath>
       <Private>True</Private>
@@ -129,9 +140,37 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiscordClientNew.cs" />
+    <Compile Include="DiscordCommands\FantasyPortfolioModule.cs" />
     <Compile Include="DiscordCommands\TextModule.cs" />
     <Compile Include="DiscordCommands\TickerModule.cs" />
     <Compile Include="DiscordCommands\TipModule.cs" />
+    <Compile Include="FantasyPortfolio\Coin.cs">
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\FantasyPortfolio.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FantasyPortfolio.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\FantasyPortfolio.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\FantasyPortfolio.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FantasyPortfolio.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\Portfolio.cs">
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\Entities\Portfolios.cs" />
+    <Compile Include="FantasyPortfolio\Entities\Coins.cs" />
+    <Compile Include="FantasyPortfolio\Round.cs">
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\Entities\Rounds.cs" />
     <Compile Include="Interfaces\Users.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -148,11 +187,33 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EntityDeploy Include="FantasyPortfolio\FantasyPortfolio.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>FantasyPortfolio.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="FantasyPortfolio\FantasyPortfolio.edmx.diagram">
+      <DependentUpon>FantasyPortfolio.edmx</DependentUpon>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FantasyPortfolio\FantasyPortfolio.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>FantasyPortfolio.edmx</DependentUpon>
+      <LastGenOutput>FantasyPortfolio.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="FantasyPortfolio\FantasyPortfolio.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>FantasyPortfolio.edmx</DependentUpon>
+      <LastGenOutput>FantasyPortfolio.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

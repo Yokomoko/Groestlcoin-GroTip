@@ -11,6 +11,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using TipBot_BL.DiscordCommands;
+using TipBot_BL.FantasyPortfolio;
 using TipBot_BL.POCO;
 using TipBot_BL.Properties;
 using TipBot_BL.QT;
@@ -24,6 +25,8 @@ namespace TipBot_BL {
         private const string CommandPrefix = "-";
         private const string TickerPrefix = "$";
         private System.Timers.Timer timer;
+        private System.Timers.Timer fantasyTimer;
+        private System.Timers.Timer fantasyTickerTimer;
 
         public static DiscordSocketClient _client;
         private CommandService _commands;
@@ -37,10 +40,25 @@ namespace TipBot_BL {
 
             _client.Log += LogAsync;
 
+            fantasyTickerTimer = new System.Timers.Timer {
+                Interval = 900000,
+                AutoReset = true,
+                Enabled = true
+            };
+
             timer = new System.Timers.Timer {
-                Interval = 1000,
+                Interval = 250,
                 AutoReset = false
             };
+
+            fantasyTimer = new System.Timers.Timer {
+                Interval = 3600000,
+                AutoReset = true,
+                Enabled = true
+            };
+
+            fantasyTimer.Elapsed += FantasyTimerOnElapsed;
+            fantasyTickerTimer.Elapsed += FantasyTickerTimerOnElapsed;
 
             await RegisterCommandsAsync();
 
@@ -54,6 +72,38 @@ namespace TipBot_BL {
             await Task.Delay(-1);
         }
 
+        private void FantasyTickerTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs) {
+            Coin.UpdateCoinValues();
+        }
+
+        private void FantasyTimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs) {
+            var embed = FantasyPortfolioModule.GetLeaderboardEmbed();
+            var winner = FantasyPortfolioModule.GetWinner();
+            var additionalText = "";
+
+            if (FantasyPortfolioModule.GetPlayers(new FantasyPortfolio_DBEntities()).Any()) {
+                if (Round.CurrentRoundEnd <= DateTime.Now) {
+                    if (FantasyPortfolioModule.PrizePool > 0) {
+                        additionalText = $"Congratulations <@{winner.UserId}>! You have won the fantasy portfolio and won {FantasyPortfolioModule.PrizePool} {Preferences.BaseCurrency}";
+                        QTCommands.SendTip(_client.CurrentUser.Id, ulong.Parse(winner.UserId), FantasyPortfolioModule.PrizePool);
+                    }
+                    else {
+                        additionalText = $"Congratulations <@{winner.UserId}>! You have won the fantasy portfolio! There was no prize.";
+                    }
+                }
+            }
+            else {
+                additionalText = "There were no participants in this round :-(";
+            }
+            using (var context = new FantasyPortfolio_DBEntities()) {
+                Round round = new Round { RoundEnds = DateTime.Now.AddMinutes(Round.RoundDurationDays) };
+                context.Rounds.Add(round);
+                context.SaveChanges();
+            }
+
+            _client.GetGuild(Settings.Default.GuildId).GetTextChannel(Settings.Default.FantasyChannel).SendMessageAsync(additionalText, false, embed);
+        }
+
         private async Task LogAsync(LogMessage log) {
             Console.WriteLine(log.ToString());
             // return Task.CompletedTask;
@@ -65,15 +115,29 @@ namespace TipBot_BL {
             await _commands.AddModulesAsync(typeof(DiscordCommands.TipModule).Assembly);
             await _commands.AddModulesAsync(typeof(DiscordCommands.TickerModule).Assembly);
             await _commands.AddModulesAsync(typeof(TextModule).Assembly);
+            await _commands.AddModulesAsync(typeof(FantasyPortfolioModule).Assembly);
         }
 
 
 
 
         private async Task ClientOnMessageReceived(SocketMessage socketMessage) {
+            //Debug
+
+
             await _client.CurrentUser.ModifyAsync(x => x.Username = "GroTip");
 
+
+
             var message = socketMessage as SocketUserMessage;
+
+
+#if DEBUG
+            if (message.Channel.Id != 456084191927468033) {
+                //Do Nothing;            
+                return;
+            }
+#endif
             if (message == null || message.Author.IsBot) {
                 return;
             }
@@ -93,8 +157,8 @@ namespace TipBot_BL {
                     Console.WriteLine(result.ErrorReason);
                 }
             }
-            else if (message.HasStringPrefix(TickerPrefix, ref argPos)){
-                if (message.Channel.Id != Settings.Default.PriceCheckChannel){
+            else if (message.HasStringPrefix(TickerPrefix, ref argPos)) {
+                if (message.Channel.Id != Settings.Default.PriceCheckChannel) {
 
                     await message.Channel.SendMessageAsync($"Please use the <#{Settings.Default.PriceCheckChannel}> channel!");
                     return;

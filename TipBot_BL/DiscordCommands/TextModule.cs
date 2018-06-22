@@ -150,14 +150,13 @@ namespace TipBot_BL.DiscordCommands {
 
             DateTime oDate = Convert.ToDateTime(datetime);
 
-            Settings.Default.NextRelease = oDate;
-            Settings.Default.Save();
+            Preferences.NextRelease = oDate;
             await ReplyAsync($"Release Date Set");
         }
 
         [Command("nextrelease")]
         public async Task NextRelease() {
-            var dt = Settings.Default.NextRelease;
+            var dt = Preferences.NextRelease;
 
             TimeSpan span = (dt - DateTime.Now);
 
