@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="cd9c3b734ca94a58a5d7ab08b7922aac" Name="Diagram1">
+        <EntityTypeShape EntityType="FantasyPortfolio_DBModel.Coin" Width="1.5" PointX="5" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FantasyPortfolio_DBModel.Portfolio" Width="1.5" PointX="3" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="FantasyPortfolio_DBModel.Round" Width="1.5" PointX="0.75" PointY="1.25" IsExpanded="true" />
+        <AssociationConnector Association="FantasyPortfolio_DBModel.FK_RoundPortfolio" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

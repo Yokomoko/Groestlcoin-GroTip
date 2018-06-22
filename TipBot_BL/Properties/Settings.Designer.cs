@@ -82,5 +82,101 @@ namespace TipBot_BL.Properties {
                 this["TipBotChannel"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("456084191927468033")]
+        public ulong FantasyChannel {
+            get {
+                return ((ulong)(this["FantasyChannel"]));
+            }
+            set {
+                this["FantasyChannel"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("408592000024051722")]
+        public ulong GuildId {
+            get {
+                return ((ulong)(this["GuildId"]));
+            }
+            set {
+                this["GuildId"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string QT_IP {
+            get {
+                return ((string)(this["QT_IP"]));
+            }
+            set {
+                this["QT_IP"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string QT_Username {
+            get {
+                return ((string)(this["QT_Username"]));
+            }
+            set {
+                this["QT_Username"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string QT_Password {
+            get {
+                return ((string)(this["QT_Password"]));
+            }
+            set {
+                this["QT_Password"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("GRS")]
+        public string BaseCurrency {
+            get {
+                return ((string)(this["BaseCurrency"]));
+            }
+            set {
+                this["BaseCurrency"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("https://chainz.cryptoid.info/grs/tx.dws?")]
+        public string ExplorerPrefix {
+            get {
+                return ((string)(this["ExplorerPrefix"]));
+            }
+            set {
+                this["ExplorerPrefix"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".htm")]
+        public string ExplorerSuffix {
+            get {
+                return ((string)(this["ExplorerSuffix"]));
+            }
+            set {
+                this["ExplorerSuffix"] = value;
+            }
+        }
     }
 }

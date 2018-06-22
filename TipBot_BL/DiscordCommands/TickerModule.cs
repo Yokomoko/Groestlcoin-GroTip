@@ -21,15 +21,12 @@ using Color = System.Drawing.Color;
 
 namespace TipBot_BL.DiscordCommands {
     public class TickerModule : ModuleBase<SocketCommandContext> {
-        private CryptoCompareClient priceClient = new CryptoCompareClient();
-        private CoinMarketCap.CoinMarketCapClient priceClientNew = new CoinMarketCap.CoinMarketCapClient();
-        private static readonly IEnumerable<string> convertToTickers = new List<string> { "BTC", "ETH", "USD" };
-
-
+        public static CoinMarketCap.CoinMarketCapClient priceClientNew = new CoinMarketCap.CoinMarketCapClient();
+        
         [Command("price")]
         public async Task GetPrice(string ticker) {
-            if (Context.Channel.Id != Settings.Default.PriceCheckChannel) {
-                await ReplyAsync($"Please use the <#{Settings.Default.PriceCheckChannel}> channel!");
+            if (Context.Channel.Id != Preferences.PriceCheckChannel) {
+                await ReplyAsync($"Please use the <#{Preferences.PriceCheckChannel}> channel!");
                 return;
             }
             var embed = await GetPriceEmbed(ticker);

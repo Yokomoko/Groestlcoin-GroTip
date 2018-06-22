@@ -17,5 +17,29 @@
     <Setting Name="TipBotChannel" Type="System.UInt64" Scope="User">
       <Value Profile="(Default)">457229141033484288</Value>
     </Setting>
+    <Setting Name="FantasyChannel" Type="System.UInt64" Scope="User">
+      <Value Profile="(Default)">456084191927468033</Value>
+    </Setting>
+    <Setting Name="GuildId" Type="System.UInt64" Scope="User">
+      <Value Profile="(Default)">408592000024051722</Value>
+    </Setting>
+    <Setting Name="QT_IP" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="QT_Username" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="QT_Password" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="BaseCurrency" Type="System.String" Scope="User">
+      <Value Profile="(Default)">GRS</Value>
+    </Setting>
+    <Setting Name="ExplorerPrefix" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://chainz.cryptoid.info/grs/tx.dws?</Value>
+    </Setting>
+    <Setting Name="ExplorerSuffix" Type="System.String" Scope="User">
+      <Value Profile="(Default)">.htm</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

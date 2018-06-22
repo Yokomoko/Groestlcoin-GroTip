@@ -10,16 +10,9 @@ using Newtonsoft.Json.Linq;
 
 namespace TipBot_BL {
     public class GroestlJson {
-        static string url = "http://127.0.0.1:1441";
-        static string username = "";
-        static string password = "";
-
-        
-
-
         public static string TipBotRequest(string methodName, List<string> parameters) {
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(url);
-            webRequest.Credentials = new NetworkCredential(username, password);
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(Preferences.QT_IP);
+            webRequest.Credentials = new NetworkCredential(Preferences.QT_Username, Preferences.QT_Password);
             webRequest.ContentType = "application/json-rpc";
             webRequest.Method = "POST";
 
@@ -51,7 +44,8 @@ namespace TipBot_BL {
                 var data = JsonConvert.DeserializeObject(respValue).ToString();
                 return data;
             }
-            catch {
+            catch (Exception e) {
+                Console.WriteLine(e.Message);
                 return "Error";
             }
         }

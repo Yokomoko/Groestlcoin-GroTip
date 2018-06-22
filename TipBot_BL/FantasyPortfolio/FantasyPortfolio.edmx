@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="FantasyPortfolio_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Coins">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TickerId" Type="int" Nullable="false" />
+          <Property Name="TickerName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="PriceUSD" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="LastUpdated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Portfolios">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoundId" Type="int" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="TickerId" Type="int" Nullable="false" />
+          <Property Name="CoinAmount" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Rounds">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="RoundEnds" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_RoundPortfolio">
+          <End Role="Rounds" Type="Self.Rounds" Multiplicity="1" />
+          <End Role="Portfolios" Type="Self.Portfolios" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rounds">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Portfolios">
+              <PropertyRef Name="RoundId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="FantasyPortfolio_DBModelStoreContainer">
+          <EntitySet Name="Coins" EntityType="Self.Coins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Portfolios" EntityType="Self.Portfolios" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Rounds" EntityType="Self.Rounds" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_RoundPortfolio" Association="Self.FK_RoundPortfolio">
+            <End Role="Rounds" EntitySet="Rounds" />
+            <End Role="Portfolios" EntitySet="Portfolios" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="FantasyPortfolio_DBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Coin">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TickerId" Type="Int32" Nullable="false" />
+          <Property Name="TickerName" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
+          <Property Name="PriceUSD" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="LastUpdated" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="Portfolio">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoundId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TickerId" Type="Int32" Nullable="false" />
+          <Property Name="CoinAmount" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+          <NavigationProperty Name="Round" Relationship="Self.FK_RoundPortfolio" FromRole="Portfolios" ToRole="Rounds" />
+        </EntityType>
+        <EntityType Name="Round">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="RoundEnds" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Portfolios" Relationship="Self.FK_RoundPortfolio" FromRole="Rounds" ToRole="Portfolios" />
+        </EntityType>
+        <Association Name="FK_RoundPortfolio">
+          <End Role="Rounds" Type="Self.Round" Multiplicity="1" />
+          <End Role="Portfolios" Type="Self.Portfolio" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Rounds">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Portfolios">
+              <PropertyRef Name="RoundId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="FantasyPortfolio_DBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Coins" EntityType="Self.Coin" />
+          <EntitySet Name="Portfolios" EntityType="Self.Portfolio" />
+          <EntitySet Name="Rounds" EntityType="Self.Round" />
+          <AssociationSet Name="FK_RoundPortfolio" Association="Self.FK_RoundPortfolio">
+            <End Role="Rounds" EntitySet="Rounds" />
+            <End Role="Portfolios" EntitySet="Portfolios" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="FantasyPortfolio_DBModelStoreContainer" CdmEntityContainer="FantasyPortfolio_DBEntities">
+    <EntitySetMapping Name="Coins">
+      <EntityTypeMapping TypeName="IsTypeOf(FantasyPortfolio_DBModel.Coin)">
+        <MappingFragment StoreEntitySet="Coins">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="TickerId" ColumnName="TickerId" />
+          <ScalarProperty Name="TickerName" ColumnName="TickerName" />
+          <ScalarProperty Name="PriceUSD" ColumnName="PriceUSD" />
+          <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Portfolios">
+      <EntityTypeMapping TypeName="IsTypeOf(FantasyPortfolio_DBModel.Portfolio)">
+        <MappingFragment StoreEntitySet="Portfolios">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="RoundId" ColumnName="RoundId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="TickerId" ColumnName="TickerId" />
+          <ScalarProperty Name="CoinAmount" ColumnName="CoinAmount" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Rounds">
+      <EntityTypeMapping TypeName="IsTypeOf(FantasyPortfolio_DBModel.Round)">
+        <MappingFragment StoreEntitySet="Rounds">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="RoundEnds" ColumnName="RoundEnds" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

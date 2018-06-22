@@ -3,30 +3,31 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using QRCoder;
-using TipBot_BL.POCO;
-using System.Drawing;
-using System.Drawing.Printing;
+using TipBot_BL.FantasyPortfolio;
 using TipBot_BL.Properties;
 using TipBot_BL.QT;
 using Color = System.Drawing.Color;
 
 namespace TipBot_BL.DiscordCommands {
     public class TipModule : ModuleBase<SocketCommandContext> {
-        private const string BaseCurrency = "GRS";
-        private const string ExplorerPrefix = "https://chainz.cryptoid.info/grs/tx.dws?";
-        private const string ExplorerSuffix = ".htm";
-        private SocketRole RainRole;
         private const decimal MinimumTxnValue = (decimal)0.0001;
         private const decimal MinimumTipValue = (decimal)0.00000001;
+        private const decimal MinBetAmount = (decimal)(0.01);
 
-        private bool IsInTipChannel => Context.Channel.Id == Settings.Default.TipBotChannel;
+        // Let it be thread-safe
+        private static readonly ThreadLocal<Random> s_Gen = new ThreadLocal<Random>(
+            () => new Random());
+
+        // Thread-safe non-skewed generator
+        public static Random Generator => s_Gen.Value;
+
+        private bool IsInTipChannel => Context.Channel.Id == Preferences.TipBotChannel;
         public enum CoinSide {
             heads = 0,
             tails = 1
@@ -37,14 +38,6 @@ namespace TipBot_BL.DiscordCommands {
                 Console.WriteLine("Empty String");
             }
             return input?.First().ToString().ToUpper() + input?.Substring(1);
-        }
-
-        [Command("setrainrole")]
-        public async Task SetRainRole(SocketRole role) {
-            if (Context?.Guild.Users != null && Context?.Guild != null && Context.Guild.Users.FirstOrDefault().GuildPermissions.Administrator) {
-                RainRole = role;
-                await ReplyAsync("Rain Role Set");
-            }
         }
 
         [Command("optallin")]
@@ -105,10 +98,10 @@ namespace TipBot_BL.DiscordCommands {
 
             if (IsInTipChannel) {
                 Context.Guild.Users.FirstOrDefault(d => d.Id == Context.User.Id)?.AddRoleAsync(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains"));
-                await ReplyAsync($"You have opted in to rains! You now have a chance to receive free {BaseCurrency}");
+                await ReplyAsync($"You have opted in to rains! You now have a chance to receive free {Preferences.BaseCurrency}");
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
         }
 
@@ -117,7 +110,7 @@ namespace TipBot_BL.DiscordCommands {
 
         //}
         //else {
-        //    await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+        //    await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
         //}
 
         [Command("optout")]
@@ -127,7 +120,7 @@ namespace TipBot_BL.DiscordCommands {
                 await ReplyAsync("You have opted out of rains :(");
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
 
         }
@@ -146,7 +139,6 @@ namespace TipBot_BL.DiscordCommands {
                     var qrcode = new Base64QRCode(data);
 
                     byte[] bytes = Convert.FromBase64String(qrcode.GetGraphic(4, Color.White, Color.FromArgb(54, 57, 62)));
-
                     MemoryStream ms = new MemoryStream(bytes);
                     await Context.Channel.SendFileAsync(ms, "qraddr.png", $"`Your deposit address is {result}`");
                 }
@@ -159,33 +151,31 @@ namespace TipBot_BL.DiscordCommands {
                 }
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
         }
 
         [Command("balance")]
         public async Task GetBalanceAsync() {
-
             if (IsInTipChannel) {
                 var result = QTCommands.GetBalance(Context.User.Id);
-                await ReplyAsync($"Your balance is {result.result} {BaseCurrency}");
+                await ReplyAsync($"Your balance is {result.result} {Preferences.BaseCurrency}");
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
         }
 
         [Command("withdraw")]
         public async Task WithdrawAsync(string address) {
-
             if (IsInTipChannel) {
                 var resp = QTCommands.Withdraw(Context.User.Id, address);
                 if (string.IsNullOrEmpty(resp.error)) {
-                    await ReplyAsync($"Withdrawn successfully! Transaction: {ExplorerPrefix}{resp.result}{ExplorerSuffix}");
+                    await ReplyAsync($"Withdrawn successfully! Transaction: {Preferences.ExplorerPrefix}{resp.result}{Preferences.ExplorerSuffix}");
                 }
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
 
         }
@@ -196,9 +186,15 @@ namespace TipBot_BL.DiscordCommands {
                 decimal decAmount;
 
                 if (decimal.TryParse(amount, out decAmount)) {
+
+                    if (decAmount < MinimumTipValue) {
+                        await ReplyAsync($"Minimum tip amount is {MinimumTipValue}");
+                        return;
+                    }
+
                     if (QTCommands.CheckBalance(Context.User.Id, decAmount)) {
                         QTCommands.SendTip(Context.User.Id, user.Id, decAmount);
-                        await ReplyAsync($"{Context.User.Mention} tipped {user.Username} {amount} {BaseCurrency}");
+                        await ReplyAsync($"{Context.User.Mention} tipped {user.Username} {amount} {Preferences.BaseCurrency}");
                     }
                     else {
                         await ReplyAsync("You do not have enough balance to tip that much!");
@@ -206,9 +202,8 @@ namespace TipBot_BL.DiscordCommands {
                 }
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
-
         }
 
         [Command("tip")]
@@ -225,7 +220,7 @@ namespace TipBot_BL.DiscordCommands {
 
                     if (QTCommands.CheckBalance(Context.User.Id, decAmount)) {
                         QTCommands.SendTip(Context.User.Id, user.Id, decAmount);
-                        await ReplyAsync($"{Context.User.Mention} tipped {user.Username} {amount} {BaseCurrency}");
+                        await ReplyAsync($"{Context.User.Mention} tipped {user.Username} {amount} {Preferences.BaseCurrency}");
                     }
                     else {
                         await ReplyAsync("You do not have enough balance to tip that much!");
@@ -233,9 +228,26 @@ namespace TipBot_BL.DiscordCommands {
                 }
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
         }
+
+        [Command("join")]
+        public async Task Join() {
+            if (FantasyPortfolioModule.EntryFee == 0 || QTCommands.CheckBalance(Context.User.Id, FantasyPortfolioModule.EntryFee)) {
+                if (FantasyPortfolioModule.EntryFee > 0) QTCommands.SendTip(Context.User.Id, Context.User.Id, FantasyPortfolioModule.EntryFee);
+                if (Portfolio.Join(Context.User.Id.ToString())) {
+                    await ReplyAsync($"You have joined round {Round.CurrentRound}. An entry fee of {FantasyPortfolioModule.EntryFee} {Preferences.BaseCurrency} has been taken.");
+                }
+                else {
+                    await ReplyAsync("You have already joined this round!");
+                }
+            }
+            else {
+                await ReplyAsync($"You do not have the required entry fee of {FantasyPortfolioModule.EntryFee} {Preferences.BaseCurrency}. Please send some {Preferences.BaseCurrency} to your tipping account and try again.");
+            }
+        }
+
 
         [Command("giftrandom")]
         public async Task Rain(string amount, string numberOfPeople) {
@@ -261,7 +273,7 @@ namespace TipBot_BL.DiscordCommands {
                 }
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
 
         }
@@ -299,7 +311,7 @@ namespace TipBot_BL.DiscordCommands {
                 }
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
 
         }
@@ -307,10 +319,10 @@ namespace TipBot_BL.DiscordCommands {
         [Command("house")]
         public async Task GetHouseBalance() {
             if (IsInTipChannel) {
-                await ReplyAsync($"The house balance is at {QTCommands.GetBalance(DiscordClientNew._client.CurrentUser.Id).result} {BaseCurrency}");
+                await ReplyAsync($"The house balance is at {QTCommands.GetBalance(DiscordClientNew._client.CurrentUser.Id).result} {Preferences.BaseCurrency}");
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
         }
 
@@ -319,7 +331,7 @@ namespace TipBot_BL.DiscordCommands {
             if (IsInTipChannel) {
                 var houseAddr = QTCommands.GetAccountAddress(Context.Guild.CurrentUser.Id);
 
-                if (qr == "qr") {
+                if (qr.ToLower() == "qr") {
                     QRCodeGenerator qrgen = new QRCodeGenerator();
                     QRCodeData data = qrgen.CreateQrCode($"{houseAddr}", QRCodeGenerator.ECCLevel.Q);
                     var qrcode = new Base64QRCode(data);
@@ -341,7 +353,7 @@ namespace TipBot_BL.DiscordCommands {
                 }
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
         }
 
@@ -350,14 +362,12 @@ namespace TipBot_BL.DiscordCommands {
             if (IsInTipChannel) {
                 decimal betAmount;
                 CoinSide coinSide;
-                decimal minBetAmount = (decimal)0.01;
-
 
                 if (Enum.TryParse(side.ToLower(), out coinSide)) {
                     if (decimal.TryParse(amount, out betAmount)) {
                         if (QTCommands.CheckBalance(Context.User.Id, betAmount)) {
-                            if (betAmount < minBetAmount) {
-                                await ReplyAsync($"Minimum bet {minBetAmount}");
+                            if (betAmount < MinBetAmount) {
+                                await ReplyAsync($"Minimum bet {MinBetAmount} {Preferences.BaseCurrency}");
                                 return;
                             }
 
@@ -365,8 +375,7 @@ namespace TipBot_BL.DiscordCommands {
                             if (QTCommands.CheckBalance(DiscordClientNew._client.CurrentUser.Id, rewardValue)) {
                                 QTCommands.SendTip(Context.User.Id, DiscordClientNew._client.CurrentUser.Id, betAmount);
                                 try {
-                                    var rng = new Random();
-                                    var coin = (CoinSide)rng.Next(0, 2);
+                                    var coin = (CoinSide)Generator.Next(0, 2);
 
                                     var embed = new EmbedBuilder();
 
@@ -375,14 +384,14 @@ namespace TipBot_BL.DiscordCommands {
                                     if (coin == coinSide) {
                                         QTCommands.SendTip(DiscordClientNew._client.CurrentUser.Id, Context.User.Id, rewardValue);
                                         embed.AddInlineField("Flipped", FirstCharToUpper(coin.ToString()));
-                                        embed.AddInlineField("Prize", $"{rewardValue} {BaseCurrency}");
-                                        embed.AddInlineField("Profit", $"{(rewardValue - betAmount)} {BaseCurrency}");
+                                        embed.AddInlineField("Prize", $"{rewardValue} {Preferences.BaseCurrency}");
+                                        embed.AddInlineField("Profit", $"{(rewardValue - betAmount)} {Preferences.BaseCurrency}");
                                         embed.WithColor(Discord.Color.Green);
                                         message = $"You won! Congratulations {Context.User.Mention}!";
                                     }
                                     else {
                                         embed.AddInlineField("Flipped", FirstCharToUpper(coin.ToString()));
-                                        embed.AddInlineField("Lost", $"{betAmount} {BaseCurrency}");
+                                        embed.AddInlineField("Lost", $"{betAmount} {Preferences.BaseCurrency}");
                                         embed.WithColor(Discord.Color.Red);
                                         message = $"Unlucky {Context.User.Mention}, you lost :(";
                                     }
@@ -411,7 +420,7 @@ namespace TipBot_BL.DiscordCommands {
                 }
             }
             else {
-                await ReplyAsync($"Please use the <#{Settings.Default.TipBotChannel}> channel");
+                await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
         }
 
@@ -419,7 +428,7 @@ namespace TipBot_BL.DiscordCommands {
         private string SendRain(SocketUser fromUser, List<SocketGuildUser> tipUsers, decimal amount) {
             if (QTCommands.CheckBalance(fromUser.Id, amount)) {
                 if (amount / tipUsers.Count < (decimal)0.01) {
-                    return $"Rain amount must be at least 0.01 {BaseCurrency} per person";
+                    return $"Rain amount must be at least 0.01 {Preferences.BaseCurrency} per person";
                 }
                 foreach (var person in tipUsers) {
                     QTCommands.SendTip(Context.User.Id, person.Id, Math.Round(amount / tipUsers.Count, 7));
@@ -428,7 +437,7 @@ namespace TipBot_BL.DiscordCommands {
                 foreach (var users in tipUsers) {
                     mentionList.Add($"{DiscordClientNew._client.GetUser(users.Id).Mention}");
                 }
-                return $"{fromUser.Mention} made it rain :cloud_rain:! Congratulations to {(mentionList.Count == 2 ? string.Join(" and ", mentionList) : string.Join(", ", mentionList))} who {(mentionList.Count > 1 ? "have" : "has")} been awarded {Math.Round(amount / mentionList.Count, 7)} {BaseCurrency} {(mentionList.Count > 1 ? "each" : "")}";
+                return $"{fromUser.Mention} made it rain :cloud_rain:! Congratulations to {(mentionList.Count == 2 ? string.Join(" and ", mentionList) : string.Join(", ", mentionList))} who {(mentionList.Count > 1 ? "have" : "has")} been awarded {Math.Round(amount / mentionList.Count, 7)} {Preferences.BaseCurrency} {(mentionList.Count > 1 ? "each" : "")}";
             }
             return "You do not have enough balance to perform this rain";
         }
