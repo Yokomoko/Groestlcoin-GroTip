@@ -12,7 +12,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TickerId" Type="int" Nullable="false" />
           <Property Name="TickerName" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="PriceUSD" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="PriceUSD" Type="decimal" Precision="18" Scale="8" Nullable="false" />
           <Property Name="LastUpdated" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Portfolios">
@@ -23,7 +23,7 @@
           <Property Name="RoundId" Type="int" Nullable="false" />
           <Property Name="UserId" Type="nvarchar(max)" Nullable="false" />
           <Property Name="TickerId" Type="int" Nullable="false" />
-          <Property Name="CoinAmount" Type="decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="CoinAmount" Type="decimal" Precision="18" Scale="8" Nullable="false" />
         </EntityType>
         <EntityType Name="Rounds">
           <Key>
@@ -64,7 +64,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TickerId" Type="Int32" Nullable="false" />
           <Property Name="TickerName" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Name="PriceUSD" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="PriceUSD" Type="Decimal" Precision="18" Scale="8" Nullable="false" />
           <Property Name="LastUpdated" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="Portfolio">
@@ -75,7 +75,7 @@
           <Property Name="RoundId" Type="Int32" Nullable="false" />
           <Property Name="UserId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="TickerId" Type="Int32" Nullable="false" />
-          <Property Name="CoinAmount" Type="Decimal" Precision="18" Scale="5" Nullable="false" />
+          <Property Name="CoinAmount" Type="Decimal" Precision="18" Scale="8" Nullable="false" />
           <NavigationProperty Name="Round" Relationship="Self.FK_RoundPortfolio" FromRole="Portfolios" ToRole="Rounds" />
         </EntityType>
         <EntityType Name="Round">

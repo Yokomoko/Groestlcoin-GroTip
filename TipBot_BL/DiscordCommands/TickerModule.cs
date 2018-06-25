@@ -22,7 +22,7 @@ using Color = System.Drawing.Color;
 namespace TipBot_BL.DiscordCommands {
     public class TickerModule : ModuleBase<SocketCommandContext> {
         public static CoinMarketCap.CoinMarketCapClient priceClientNew = new CoinMarketCap.CoinMarketCapClient();
-        
+
         [Command("price")]
         public async Task GetPrice(string ticker) {
             if (Context.Channel.Id != Preferences.PriceCheckChannel) {
@@ -52,14 +52,14 @@ namespace TipBot_BL.DiscordCommands {
                         sb.AppendLine("**Price " + quote.Key + ":** " + "$" + Math.Round(quote.Value.Price.GetValueOrDefault(0), 2));
                     }
                     else {
-                        sb.AppendLine("**Price " + quote.Key + ":** " + Math.Round(quote.Value.Price.GetValueOrDefault(0), 8) + " " + quote.Key);
+                        sb.AppendLine("**Price " + quote.Key + ":** " + decimal.Parse(Math.Round(quote.Value.Price.GetValueOrDefault(0), 8).ToString(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowExponent) + " " + quote.Key);
                     }
                 }
 
                 sb.Append(Environment.NewLine);
                 sb.AppendLine($"**Market Cap: **${tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.MarketCap:n}");
                 sb.AppendLine($"**24h volume: **${tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.Volume24H:n}");
-                sb.AppendLine($"**Supply: **${tickerResponse.Data.TotalSupply:n}");
+                sb.AppendLine($"**Supply: **{tickerResponse.Data.TotalSupply:n}");
                 sb.Append(Environment.NewLine);
                 sb.AppendLine($"**Change 1h: **{tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.PercentChange1H:n}%");
                 sb.AppendLine($"**Change 24h: **{tickerResponse.Data.Quotes.FirstOrDefault(d => d.Key == "USD").Value.PercentChange24H:n}%");

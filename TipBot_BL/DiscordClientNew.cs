@@ -52,7 +52,7 @@ namespace TipBot_BL {
             };
 
             fantasyTimer = new System.Timers.Timer {
-                Interval = 3600000,
+                Interval = 10000,
                 AutoReset = true,
                 Enabled = true
             };
@@ -81,6 +81,7 @@ namespace TipBot_BL {
             var winner = FantasyPortfolioModule.GetWinner();
             var additionalText = "";
 
+            TimeSpan span = (Round.CurrentRoundEnd - DateTime.Now);
 
             if (Round.CurrentRoundEnd <= DateTime.Now) {
                 if (FantasyPortfolioModule.GetPlayers(new FantasyPortfolio_DBEntities()).Any()) {
@@ -96,10 +97,19 @@ namespace TipBot_BL {
                     embed.WithDescription("Round has finished! There were no participants in this round, so nobody wins!");
                 }
                 using (var context = new FantasyPortfolio_DBEntities()) {
-                    Round round = new Round { RoundEnds = DateTime.Now.AddMinutes(Round.RoundDurationDays) };
+                    Round round = new Round { RoundEnds = DateTime.Now.AddDays(Round.RoundDurationDays) };
                     context.Rounds.Add(round);
                     context.SaveChanges();
                 }
+                fantasyTimer.Interval = 3600000;
+            }
+            else if (span.TotalMilliseconds < fantasyTickerTimer.Interval) {
+                //Set next interval to 500ms after the round ends
+                fantasyTimer.Interval = span.TotalMilliseconds + 500;
+            }
+            else {
+                // Set the next interval to 1 hour
+                fantasyTimer.Interval = 3600000;
             }
             _client.GetGuild(Settings.Default.GuildId).GetTextChannel(Settings.Default.FantasyChannel).SendMessageAsync(additionalText, false, embed);
         }

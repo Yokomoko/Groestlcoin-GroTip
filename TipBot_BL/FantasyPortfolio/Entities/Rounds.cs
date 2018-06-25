@@ -10,7 +10,7 @@ namespace TipBot_BL.FantasyPortfolio {
             get {
                 using (var context = new FantasyPortfolio_DBEntities()) {
                     if (!context.Rounds.Any()) {
-                        context.Rounds.Add(new Round { RoundEnds = DateTime.Now.AddDays(1) });
+                        context.Rounds.Add(new Round { RoundEnds = DateTime.Now.AddDays(RoundDurationDays) });
                         context.SaveChanges();
                     }
                     var lastRound = context.Rounds.OrderByDescending(d => d.Id).FirstOrDefault();
@@ -19,13 +19,13 @@ namespace TipBot_BL.FantasyPortfolio {
             }
         }
 
-        public static int RoundDurationDays = 7;
+        public static int RoundDurationDays = 1;
 
         public static DateTime CurrentRoundEnd {
             get {
                 using (var context = new FantasyPortfolio_DBEntities()) {
                     if (!context.Rounds.Any()) {
-                        context.Rounds.Add(new Round { RoundEnds = DateTime.Now.AddDays(1) });
+                        context.Rounds.Add(new Round { RoundEnds = DateTime.Now.AddDays(RoundDurationDays) });
                         context.SaveChanges();
                     }
                     var lastRound = context.Rounds.OrderByDescending(d => d.Id).FirstOrDefault();
