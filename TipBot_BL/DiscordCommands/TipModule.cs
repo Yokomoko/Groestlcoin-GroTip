@@ -60,7 +60,7 @@ namespace TipBot_BL.DiscordCommands {
                     if (!socketGuildUser.Roles.Contains(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains"))) {
                         Context.Guild.Users.FirstOrDefault(d => d.Id == socketGuildUser.Id)?.AddRoleAsync(Context.Guild.Roles.FirstOrDefault(d => d.Name == "Rains"));
                         //await socketGuildUser.SendMessageAsync("hello");
-                        await socketGuildUser.GetOrCreateDMChannelAsync(Discord.RequestOptions.Default).Result.SendMessageAsync("You've been automatically opted in to receive free GRS! To opt out, write `-optout` in the Groestlcoin Discord Tipbot channel");
+                        await socketGuildUser.GetOrCreateDMChannelAsync(Discord.RequestOptions.Default).Result.SendMessageAsync($"You've been automatically opted in to receive free {Preferences.BaseCurrency}! To opt out, write `-optout` in the Groestlcoin Discord Tipbot channel");
                         Console.WriteLine($"Opted in {socketGuildUser.Username}");
                         optInCount++;
                     }
@@ -105,13 +105,6 @@ namespace TipBot_BL.DiscordCommands {
             }
         }
 
-
-        //if (IsInTipChannel) {
-
-        //}
-        //else {
-        //    await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
-        //}
 
         [Command("optout")]
         public async Task OptOut() {

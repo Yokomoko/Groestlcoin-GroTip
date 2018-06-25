@@ -117,7 +117,7 @@ namespace TipBot_BL.DiscordCommands {
             tipSb.AppendLine("**-optin:** Opts you in to receive random Groestlcoin rains from the tip bot");
             tipSb.AppendLine("**-optout:** Opts you outof receiving random Groestlcoin rains from the tip bot :(");
             tipSb.AppendLine("**-address:** Gets your deposit address to use the tipping functionality - Optional: add 'qr' to the end to get a QR code (-address qr)");
-            tipSb.AppendLine("**-balance:** Gets your GRS balance from the bot");
+            tipSb.AppendLine($"**-balance:** Gets your {Preferences.BaseCurrency} balance from the bot");
             tipSb.AppendLine("**-withdraw:** Withdraws your balance. Syntax: -withdraw [address]");
             tipSb.AppendLine("**-tip:** Tip another user. Syntax: -tip [@user] [amount] OR -tip [amount] [@user]");
             tipSb.AppendLine("**-giftrandom:** Tip random people. Syntax: -giftrandom [amount] [number of people]");
@@ -126,7 +126,7 @@ namespace TipBot_BL.DiscordCommands {
             tipSb.AppendLine(Environment.NewLine);
             tipSb.AppendLine("**-flip:** Simple coin flip game! Bet your Groestlcoin on either Heads or Tails for a chance to win more! 2% house edge Syntax: -flip [heads/tails] [amount]");
             tipSb.AppendLine(Environment.NewLine);
-            tipSb.AppendLine("**$**: Price check a coin! Syntax: $[ticker], for example: $GRS (Alt: -price [ticker])");
+            tipSb.AppendLine($"**$**: Price check a coin! Syntax: $[ticker], for example: ${Preferences.BaseCurrency} (Alt: -price [ticker])");
             tipSb.AppendLine("**-nextrelease**: Gives a countdown to the next release");
             embed.WithDescription(tipSb.ToString());
             embed.WithFooter("Developed by Yokomoko (FYoKoGrSXGpTavNFVbvW18UYxo6JVbUDDa)");
