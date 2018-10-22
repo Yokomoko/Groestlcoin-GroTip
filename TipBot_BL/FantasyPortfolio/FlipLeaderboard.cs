@@ -12,13 +12,11 @@ namespace TipBot_BL.FantasyPortfolio
     using System;
     using System.Collections.Generic;
     
-    public partial class Coin
+    public partial class FlipLeaderboard
     {
-        public int Id { get; set; }
-        public int TickerId { get; set; }
-        public string TickerName { get; set; }
-        public decimal PriceUSD { get; set; }
-        public System.DateTime LastUpdated { get; set; }
-        public Nullable<decimal> Volume24 { get; set; }
+        public long ID { get; set; }
+        public string UserId { get; set; }
+        public Nullable<decimal> TotalBet { get; set; }
+        public Nullable<int> TotalWins { get; set; }
     }
 }

@@ -31,12 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CoinMarketCap, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CoinMarketCap-API.1.1.1\lib\netstandard1.1\CoinMarketCap.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CryptoCompare, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CryptoCompare.0.0.6\lib\net45\CryptoCompare.dll</HintPath>
+    <Reference Include="CoinMarketCap, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CoinMarketCap-API.1.2.0\lib\netstandard1.1\CoinMarketCap.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Discord.Net.Commands, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -140,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiscordClientNew.cs" />
+    <Compile Include="DiscordCommands\BlockchainModule.cs" />
     <Compile Include="DiscordCommands\FantasyPortfolioModule.cs" />
     <Compile Include="DiscordCommands\TextModule.cs" />
     <Compile Include="DiscordCommands\TickerModule.cs" />
@@ -147,6 +144,7 @@
     <Compile Include="FantasyPortfolio\Coin.cs">
       <DependentUpon>FantasyPortfolio.tt</DependentUpon>
     </Compile>
+    <Compile Include="FantasyPortfolio\Entities\FlipResult.cs" />
     <Compile Include="FantasyPortfolio\FantasyPortfolio.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -161,6 +159,21 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FantasyPortfolio.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\FlipLeaderboard.cs">
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\FlipResults.cs">
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\FlipResultStatistics.cs">
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\Leaderboard.cs">
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
+    </Compile>
+    <Compile Include="FantasyPortfolio\LeaderboardTicker.cs">
+      <DependentUpon>FantasyPortfolio.tt</DependentUpon>
     </Compile>
     <Compile Include="FantasyPortfolio\Portfolio.cs">
       <DependentUpon>FantasyPortfolio.tt</DependentUpon>

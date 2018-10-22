@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -16,12 +14,7 @@ namespace TipBot_BL {
             webRequest.ContentType = "application/json-rpc";
             webRequest.Method = "POST";
 
-            string respValue = string.Empty;
-
-            JObject joe = new JObject();
-            joe.Add(new JProperty("jsonrpc", "1.0"));
-            joe.Add(new JProperty("id", "1"));
-            joe.Add(new JProperty("method", methodName));
+            JObject joe = new JObject { new JProperty("jsonrpc", "1.0"), new JProperty("id", "1"), new JProperty("method", methodName) };
 
             JArray props = new JArray();
             foreach (var parameter in parameters) {
@@ -39,8 +32,8 @@ namespace TipBot_BL {
 
             try {
                 WebResponse webResponse = webRequest.GetResponse();
-                var streamReader = new StreamReader(webResponse.GetResponseStream(), true);
-                respValue = streamReader.ReadToEnd();
+                var streamReader = new StreamReader(webResponse.GetResponseStream() ?? throw new InvalidOperationException(), true);
+                var respValue = streamReader.ReadToEnd();
                 var data = JsonConvert.DeserializeObject(respValue).ToString();
                 return data;
             }

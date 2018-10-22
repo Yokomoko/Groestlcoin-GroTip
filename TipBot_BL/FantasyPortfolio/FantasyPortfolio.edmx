@@ -4,56 +4,122 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="FantasyPortfolio_DBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
-        <EntityType Name="Coins">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="TickerId" Type="int" Nullable="false" />
-          <Property Name="TickerName" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="PriceUSD" Type="decimal" Precision="18" Scale="8" Nullable="false" />
-          <Property Name="LastUpdated" Type="datetime" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Portfolios">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RoundId" Type="int" Nullable="false" />
-          <Property Name="UserId" Type="nvarchar(max)" Nullable="false" />
-          <Property Name="TickerId" Type="int" Nullable="false" />
-          <Property Name="CoinAmount" Type="decimal" Precision="18" Scale="8" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Rounds">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RoundEnds" Type="datetime" Nullable="false" />
-        </EntityType>
-        <Association Name="FK_RoundPortfolio">
-          <End Role="Rounds" Type="Self.Rounds" Multiplicity="1" />
-          <End Role="Portfolios" Type="Self.Portfolios" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Rounds">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Portfolios">
-              <PropertyRef Name="RoundId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityContainer Name="FantasyPortfolio_DBModelStoreContainer">
-          <EntitySet Name="Coins" EntityType="Self.Coins" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Portfolios" EntityType="Self.Portfolios" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Rounds" EntityType="Self.Rounds" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK_RoundPortfolio" Association="Self.FK_RoundPortfolio">
-            <End Role="Rounds" EntitySet="Rounds" />
-            <End Role="Portfolios" EntitySet="Portfolios" />
-          </AssociationSet>
-        </EntityContainer>
-      </Schema></edmx:StorageModels>
+    <Schema Namespace="FantasyPortfolio_DBModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="FantasyPortfolio_DBModelStoreContainer">
+    <EntitySet Name="Coins" EntityType="FantasyPortfolio_DBModel.Store.Coins" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Portfolios" EntityType="FantasyPortfolio_DBModel.Store.Portfolios" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Rounds" EntityType="FantasyPortfolio_DBModel.Store.Rounds" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="Leaderboards" EntityType="FantasyPortfolio_DBModel.Store.Leaderboards" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="LeaderboardTickers" EntityType="FantasyPortfolio_DBModel.Store.LeaderboardTickers" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="FlipResults" EntityType="FantasyPortfolio_DBModel.Store.FlipResults" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="FlipLeaderboard" EntityType="FantasyPortfolio_DBModel.Store.FlipLeaderboard" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="FlipResultStatistics" EntityType="FantasyPortfolio_DBModel.Store.FlipResultStatistics" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="FK_RoundPortfolio" Association="FantasyPortfolio_DBModel.Store.FK_RoundPortfolio">
+      <End Role="Rounds" EntitySet="Rounds" />
+      <End Role="Portfolios" EntitySet="Portfolios" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="Coins">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TickerId" Type="int" Nullable="false" />
+    <Property Name="TickerName" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PriceUSD" Type="decimal" Nullable="false" Precision="18" Scale="8" />
+    <Property Name="LastUpdated" Type="datetime" Nullable="false" />
+    <Property Name="Volume24" Type="decimal" Nullable="true" Precision="28" Scale="18" />
+  </EntityType>
+  <EntityType Name="Portfolios">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="RoundId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="TickerId" Type="int" Nullable="false" />
+    <Property Name="CoinAmount" Type="decimal" Nullable="false" Precision="18" Scale="8" />
+  </EntityType>
+  <EntityType Name="Rounds">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="RoundEnds" Type="datetime" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Leaderboards">
+    <Key>
+      <PropertyRef Name="RoundId" />
+      <PropertyRef Name="UserId" />
+    </Key>
+    <Property Name="RN" Type="bigint" Nullable="true" />
+    <Property Name="RoundId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="totalamount" Type="decimal" Nullable="true" Precision="38" Scale="6" />
+  </EntityType>
+  <EntityType Name="LeaderboardTickers">
+    <Key>
+      <PropertyRef Name="RoundId" />
+      <PropertyRef Name="UserId" />
+      <PropertyRef Name="TickerName" />
+    </Key>
+    <Property Name="RN" Type="bigint" Nullable="true" />
+    <Property Name="RoundId" Type="int" Nullable="false" />
+    <Property Name="UserId" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="TickerName" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="DollarValue" Type="decimal" Nullable="true" Precision="38" Scale="6" />
+    <Property Name="CoinCount" Type="decimal" Nullable="true" Precision="38" Scale="8" />
+  </EntityType>
+  <EntityType Name="FlipResults">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DateTime" Type="datetime" Nullable="true" />
+    <Property Name="UserId" Type="varchar" Nullable="true" MaxLength="100" />
+    <Property Name="FlipResult" Type="tinyint" Nullable="true" />
+    <Property Name="UserFlip" Type="tinyint" Nullable="true" />
+    <Property Name="IsWin" Type="int" StoreGeneratedPattern="Computed" Nullable="false" />
+    <Property Name="FlipValue" Type="decimal" Nullable="true" Precision="18" Scale="8" />
+  </EntityType>
+  <EntityType Name="FlipLeaderboard">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="bigint" Nullable="false" />
+    <Property Name="UserId" Type="varchar" Nullable="true" MaxLength="100" />
+    <Property Name="TotalBet" Type="decimal" Nullable="true" Precision="38" Scale="8" />
+    <Property Name="TotalWins" Type="int" Nullable="true" />
+  </EntityType>
+  <EntityType Name="FlipResultStatistics">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="TotalFlips" Type="int" Nullable="true" />
+    <Property Name="Wins" Type="int" Nullable="true" />
+    <Property Name="Losses" Type="int" Nullable="true" />
+    <Property Name="WinPercentage" Type="decimal" Nullable="true" Precision="29" Scale="11" />
+    <Property Name="LossPercentage" Type="decimal" Nullable="true" Precision="29" Scale="11" />
+    <Property Name="TotalFlipped" Type="decimal" Nullable="true" Precision="38" Scale="8" />
+    <Property Name="PaidOut" Type="decimal" Nullable="true" Precision="38" Scale="8" />
+    <Property Name="PaidIn" Type="decimal" Nullable="true" Precision="38" Scale="8" />
+    <Property Name="HeadFlips" Type="int" Nullable="true" />
+    <Property Name="TailFlips" Type="int" Nullable="true" />
+  </EntityType>
+  <Association Name="FK_RoundPortfolio">
+    <End Role="Rounds" Type="FantasyPortfolio_DBModel.Store.Rounds" Multiplicity="1" />
+    <End Role="Portfolios" Type="FantasyPortfolio_DBModel.Store.Portfolios" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Rounds">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Portfolios">
+        <PropertyRef Name="RoundId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="FantasyPortfolio_DBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -66,6 +132,7 @@
           <Property Name="TickerName" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="PriceUSD" Type="Decimal" Precision="18" Scale="8" Nullable="false" />
           <Property Name="LastUpdated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Volume24" Type="Decimal" Precision="28" Scale="18" />
         </EntityType>
         <EntityType Name="Portfolio">
           <Key>
@@ -106,7 +173,72 @@
             <End Role="Rounds" EntitySet="Rounds" />
             <End Role="Portfolios" EntitySet="Portfolios" />
           </AssociationSet>
+          <EntitySet Name="Leaderboards" EntityType="FantasyPortfolio_DBModel.Leaderboard" />
+          <EntitySet Name="LeaderboardTickers" EntityType="FantasyPortfolio_DBModel.LeaderboardTicker" />
+          <EntitySet Name="FlipResults" EntityType="FantasyPortfolio_DBModel.FlipResults" />
+          <EntitySet Name="FlipLeaderboard" EntityType="FantasyPortfolio_DBModel.FlipLeaderboard" />
+          <EntitySet Name="FlipResultStatistics" EntityType="FantasyPortfolio_DBModel.FlipResultStatistics" />
         </EntityContainer>
+        <EntityType Name="Leaderboard">
+          <Key>
+            <PropertyRef Name="RoundId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="RN" Type="Int64" />
+          <Property Name="RoundId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="totalamount" Type="Decimal" Precision="38" Scale="6" />
+        </EntityType>
+        <EntityType Name="LeaderboardTicker">
+          <Key>
+            <PropertyRef Name="RoundId" />
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="TickerName" />
+          </Key>
+          <Property Name="RN" Type="Int64" />
+          <Property Name="RoundId" Type="Int32" Nullable="false" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TickerName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DollarValue" Type="Decimal" Precision="38" Scale="6" />
+          <Property Name="CoinCount" Type="Decimal" Precision="38" Scale="8" />
+        </EntityType>
+        <EntityType Name="FlipResults">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateTime" Type="DateTime" Precision="3" />
+          <Property Name="UserId" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="FlipResult" Type="Byte" />
+          <Property Name="UserFlip" Type="Byte" />
+          <Property Name="IsWin" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="FlipValue" Type="Decimal" Precision="18" Scale="8" />
+        </EntityType>
+        <EntityType Name="FlipLeaderboard">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" />
+          <Property Name="UserId" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="TotalBet" Type="Decimal" Precision="38" Scale="8" />
+          <Property Name="TotalWins" Type="Int32" />
+        </EntityType>
+        <EntityType Name="FlipResultStatistics">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TotalFlips" Type="Int32" />
+          <Property Name="Wins" Type="Int32" />
+          <Property Name="Losses" Type="Int32" />
+          <Property Name="WinPercentage" Type="Decimal" Precision="29" Scale="11" />
+          <Property Name="LossPercentage" Type="Decimal" Precision="29" Scale="11" />
+          <Property Name="TotalFlipped" Type="Decimal" Precision="38" Scale="8" />
+          <Property Name="PaidOut" Type="Decimal" Precision="38" Scale="8" />
+          <Property Name="PaidIn" Type="Decimal" Precision="38" Scale="8" />
+          <Property Name="HeadFlips" Type="Int32" />
+          <Property Name="TailFlips" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -121,6 +253,7 @@
           <ScalarProperty Name="TickerName" ColumnName="TickerName" />
           <ScalarProperty Name="PriceUSD" ColumnName="PriceUSD" />
           <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+          <ScalarProperty Name="Volume24" ColumnName="Volume24" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -140,6 +273,68 @@
         <MappingFragment StoreEntitySet="Rounds">
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="RoundEnds" ColumnName="RoundEnds" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Leaderboards">
+      <EntityTypeMapping TypeName="IsTypeOf(FantasyPortfolio_DBModel.Leaderboard)">
+        <MappingFragment StoreEntitySet="Leaderboards">
+          <ScalarProperty Name="RoundId" ColumnName="RoundId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="RN" ColumnName="RN" />
+          <ScalarProperty Name="totalamount" ColumnName="totalamount" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="LeaderboardTickers">
+      <EntityTypeMapping TypeName="IsTypeOf(FantasyPortfolio_DBModel.LeaderboardTicker)">
+        <MappingFragment StoreEntitySet="LeaderboardTickers">
+          <ScalarProperty Name="RoundId" ColumnName="RoundId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="TickerName" ColumnName="TickerName" />
+          <ScalarProperty Name="RN" ColumnName="RN" />
+          <ScalarProperty Name="DollarValue" ColumnName="DollarValue" />
+          <ScalarProperty Name="CoinCount" ColumnName="CoinCount" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FlipResults">
+      <EntityTypeMapping TypeName="IsTypeOf(FantasyPortfolio_DBModel.FlipResults)">
+        <MappingFragment StoreEntitySet="FlipResults">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="DateTime" ColumnName="DateTime" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="FlipResult" ColumnName="FlipResult" />
+          <ScalarProperty Name="UserFlip" ColumnName="UserFlip" />
+          <ScalarProperty Name="IsWin" ColumnName="IsWin" />
+          <ScalarProperty Name="FlipValue" ColumnName="FlipValue" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FlipLeaderboard">
+      <EntityTypeMapping TypeName="IsTypeOf(FantasyPortfolio_DBModel.FlipLeaderboard)">
+        <MappingFragment StoreEntitySet="FlipLeaderboard">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="TotalBet" ColumnName="TotalBet" />
+          <ScalarProperty Name="TotalWins" ColumnName="TotalWins" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FlipResultStatistics">
+      <EntityTypeMapping TypeName="IsTypeOf(FantasyPortfolio_DBModel.FlipResultStatistics)">
+        <MappingFragment StoreEntitySet="FlipResultStatistics">
+          <ScalarProperty Name="id" ColumnName="id" />
+          <ScalarProperty Name="TotalFlips" ColumnName="TotalFlips" />
+          <ScalarProperty Name="Wins" ColumnName="Wins" />
+          <ScalarProperty Name="Losses" ColumnName="Losses" />
+          <ScalarProperty Name="WinPercentage" ColumnName="WinPercentage" />
+          <ScalarProperty Name="LossPercentage" ColumnName="LossPercentage" />
+          <ScalarProperty Name="TotalFlipped" ColumnName="TotalFlipped" />
+          <ScalarProperty Name="PaidOut" ColumnName="PaidOut" />
+          <ScalarProperty Name="PaidIn" ColumnName="PaidIn" />
+          <ScalarProperty Name="HeadFlips" ColumnName="HeadFlips" />
+          <ScalarProperty Name="TailFlips" ColumnName="TailFlips" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

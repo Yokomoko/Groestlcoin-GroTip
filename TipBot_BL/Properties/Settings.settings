@@ -18,10 +18,10 @@
       <Value Profile="(Default)">457229141033484288</Value>
     </Setting>
     <Setting Name="FantasyChannel" Type="System.UInt64" Scope="User">
-      <Value Profile="(Default)">456084191927468033</Value>
+      <Value Profile="(Default)">459672024265261107</Value>
     </Setting>
     <Setting Name="GuildId" Type="System.UInt64" Scope="User">
-      <Value Profile="(Default)">408592000024051722</Value>
+      <Value Profile="(Default)">372707284289060865</Value>
     </Setting>
     <Setting Name="QT_IP" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
@@ -40,6 +40,8 @@
     </Setting>
     <Setting Name="ExplorerSuffix" Type="System.String" Scope="User">
       <Value Profile="(Default)">.htm</Value>
+    </Setting>
+    <Setting Name="FooterText" Type="System.String" Scope="User">
     </Setting>
   </Settings>
 </SettingsFile>

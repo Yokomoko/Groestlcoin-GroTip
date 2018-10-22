@@ -1,22 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
-using QRCoder;
-using TipBot_BL.POCO;
-using System.Drawing;
-using System.Drawing.Printing;
-using CoinMarketCap.Models;
-using CryptoCompare;
-using TipBot_BL.Properties;
-using TipBot_BL.QT;
 using Color = System.Drawing.Color;
 
 namespace TipBot_BL.DiscordCommands {
@@ -55,9 +42,9 @@ namespace TipBot_BL.DiscordCommands {
         }
 
         public static Color ChangeColorBrightness(Color color, float correctionFactor) {
-            float red = (float)color.R;
-            float green = (float)color.G;
-            float blue = (float)color.B;
+            float red = color.R;
+            float green = color.G;
+            float blue = color.B;
 
             if (correctionFactor < 0) {
                 correctionFactor = 1 + correctionFactor;
@@ -73,34 +60,6 @@ namespace TipBot_BL.DiscordCommands {
 
             return Color.FromArgb(color.A, (int)red, (int)green, (int)blue);
         }
-
-
-        //[Command("createranks")]
-        //public async Task CreateRanks() {
-        //    var guild = Context.Guild;
-        //    var roles = guild.Roles;
-
-        //    Color color = Color.FromArgb(0, 28, 59, 59);
-
-        //    foreach (var rank in Enum.GetNames(typeof(Ranks))) {
-        //        if (roles.All(d => d.Name != rank.Replace("_", " "))) {
-        //            var discordColor = new Discord.Color(color.R, color.G, color.B);
-        //            await guild.CreateRoleAsync(rank.Replace("_", " "), null, discordColor);
-        //            color = Color.FromArgb(0, color.R + 7, color.G + 7, color.B + 7);
-        //        }
-        //    }
-        //}
-
-        //[Command("removeranks")]
-        //public async Task RemoveRanks() {
-        //    var guild = Context.Guild;
-        //    var roles = guild.Roles;
-
-        //    foreach (var rank in Enum.GetNames(typeof(Ranks))) {
-        //        var role = roles.FirstOrDefault(d => d.Name == rank.Replace("_", " "));
-        //        role?.DeleteAsync();
-        //    }
-        //}
 
         [Command("ping")]
         public async Task PingAsync() {
@@ -151,7 +110,7 @@ namespace TipBot_BL.DiscordCommands {
             DateTime oDate = Convert.ToDateTime(datetime);
 
             Preferences.NextRelease = oDate;
-            await ReplyAsync($"Release Date Set");
+            await ReplyAsync("Release Date Set");
         }
 
         [Command("nextrelease")]
@@ -166,7 +125,31 @@ namespace TipBot_BL.DiscordCommands {
             await ReplyAsync($"The next release is in {format}");
         }
 
+        [Command("social")]
+        public async Task GetSocialLinks() {
+            var embed = new EmbedBuilder();
+            embed.WithTitle($"{Preferences.BaseCurrency} Social Media");
+            embed.WithDescription("Please link/follow/share our social media channels!");
 
+            embed.AddInlineField("Reddit", "http://reddit.com/r/groestlcoin");
+            embed.AddInlineField("Telegram", "http://t.me/groestl");
+            embed.AddInlineField("Twitter", "http://twitter.com/GroestlcoinTeam");
+            embed.AddInlineField("Discord", "https://discord.gg/vCKxQBz");
+            embed.AddField("Bitcoin Talk", "https://bitcointalk.org/index.php?topic=525926.0");
+            embed.WithFooter(Preferences.FooterText);
+            await ReplyAsync("", false, embed);
+        }
+
+        [Command("exchanges")]
+        public async Task GetExchanges() {
+            var embed = new EmbedBuilder();
+            var sb = new StringBuilder();
+            sb.AppendLine($"You can buy and sell {Preferences.BaseCurrency} at more than 30 global exchanges including Bittrex, Binance and Huobi. For a full list and links to the markets, [click here](https://www.groestlcoin.org/#exchanges)");
+
+            embed.WithDescription(sb.ToString());
+
+            await ReplyAsync("", false, embed);
+        }
 
 
     }

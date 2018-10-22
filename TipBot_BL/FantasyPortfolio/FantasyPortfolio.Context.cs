@@ -28,5 +28,10 @@ namespace TipBot_BL.FantasyPortfolio
         public virtual DbSet<Coin> Coins { get; set; }
         public virtual DbSet<Portfolio> Portfolios { get; set; }
         public virtual DbSet<Round> Rounds { get; set; }
+        public virtual DbSet<Leaderboard> Leaderboards { get; set; }
+        public virtual DbSet<LeaderboardTicker> LeaderboardTickers { get; set; }
+        public virtual DbSet<FlipResults> FlipResults { get; set; }
+        public virtual DbSet<FlipLeaderboard> FlipLeaderboard { get; set; }
+        public virtual DbSet<FlipResultStatistics> FlipResultStatistics { get; set; }
     }
 }

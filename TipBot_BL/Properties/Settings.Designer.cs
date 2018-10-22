@@ -12,7 +12,7 @@ namespace TipBot_BL.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -61,7 +61,7 @@ namespace TipBot_BL.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("06/22/2018 21:00:00")]
+        [global::System.Configuration.DefaultSettingValueAttribute("12/21/2018 20:00:00")]
         public global::System.DateTime NextRelease {
             get {
                 return ((global::System.DateTime)(this["NextRelease"]));
@@ -85,7 +85,7 @@ namespace TipBot_BL.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("456084191927468033")]
+        [global::System.Configuration.DefaultSettingValueAttribute("459672024265261107")]
         public ulong FantasyChannel {
             get {
                 return ((ulong)(this["FantasyChannel"]));
@@ -97,7 +97,7 @@ namespace TipBot_BL.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("408592000024051722")]
+        [global::System.Configuration.DefaultSettingValueAttribute("372707284289060865")]
         public ulong GuildId {
             get {
                 return ((ulong)(this["GuildId"]));
@@ -176,6 +176,19 @@ namespace TipBot_BL.Properties {
             }
             set {
                 this["ExplorerSuffix"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Help support the developer funds, by donating or mining to FWN1qdiRrymSR6jbpbanLY" +
+            "qZpjkEaZouHN")]
+        public string FooterText {
+            get {
+                return ((string)(this["FooterText"]));
+            }
+            set {
+                this["FooterText"] = value;
             }
         }
     }

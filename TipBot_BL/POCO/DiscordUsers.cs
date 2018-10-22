@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Discord.Commands;
 using LiteDB;
-using Newtonsoft.Json;
-using TipBot_BL.Interfaces;
 using TipBot_BL.Properties;
-using TipBot_BL.QT;
 
 namespace TipBot_BL.POCO {
 
@@ -42,8 +37,7 @@ namespace TipBot_BL.POCO {
                 var discordUsers = db.GetCollection<DiscordUsers>("discordusers");
                 var user = discordUsers.Find(d => d.UserId == userId).FirstOrDefault();
                 if (user == null) {
-                    user = new DiscordUsers();
-                    user.UserId = userId;
+                    user = new DiscordUsers { UserId = userId };
                     discordUsers.Insert(user);
                 }
                 if (user.RainOptIn.GetValueOrDefault(false)) {
@@ -64,8 +58,7 @@ namespace TipBot_BL.POCO {
                 var discordUsers = db.GetCollection<DiscordUsers>("discordusers");
                 var user = discordUsers.Find(d => d.UserId == userId).FirstOrDefault();
                 if (user == null) {
-                    user = new DiscordUsers();
-                    user.UserId = userId;
+                    user = new DiscordUsers { UserId = userId };
                     discordUsers.Insert(user);
                 }
                 if (!user.RainOptIn.GetValueOrDefault(false)) {

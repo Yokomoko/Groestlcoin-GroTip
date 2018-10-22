@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TipBot_BL.FantasyPortfolio {
     public partial class Round {
@@ -14,12 +12,13 @@ namespace TipBot_BL.FantasyPortfolio {
                         context.SaveChanges();
                     }
                     var lastRound = context.Rounds.OrderByDescending(d => d.Id).FirstOrDefault();
+                    Debug.Assert(lastRound != null, nameof(lastRound) + " != null");
                     return lastRound.Id;
                 }
             }
         }
 
-        public static int RoundDurationDays = 1;
+        public static int RoundDurationDays = 7;
 
         public static DateTime CurrentRoundEnd {
             get {
@@ -29,6 +28,7 @@ namespace TipBot_BL.FantasyPortfolio {
                         context.SaveChanges();
                     }
                     var lastRound = context.Rounds.OrderByDescending(d => d.Id).FirstOrDefault();
+                    Debug.Assert(lastRound != null, nameof(lastRound) + " != null");
                     return lastRound.RoundEnds;
                 }
             }
