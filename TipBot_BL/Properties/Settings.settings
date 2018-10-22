@@ -12,7 +12,7 @@
       <Value Profile="(Default)">457228636303654912</Value>
     </Setting>
     <Setting Name="NextRelease" Type="System.DateTime" Scope="User">
-      <Value Profile="(Default)">06/22/2018 21:00:00</Value>
+      <Value Profile="(Default)">12/21/2018 20:00:00</Value>
     </Setting>
     <Setting Name="TipBotChannel" Type="System.UInt64" Scope="User">
       <Value Profile="(Default)">457229141033484288</Value>
@@ -42,6 +42,7 @@
       <Value Profile="(Default)">.htm</Value>
     </Setting>
     <Setting Name="FooterText" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Help support the developer funds, by donating or mining to FWN1qdiRrymSR6jbpbanLYqZpjkEaZouHN</Value>
     </Setting>
   </Settings>
 </SettingsFile>
