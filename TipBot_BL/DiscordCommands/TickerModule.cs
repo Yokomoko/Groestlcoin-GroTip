@@ -90,7 +90,7 @@ namespace TipBot_BL.DiscordCommands {
 
         public static async Task<List<CoinGeckoSummary>> GetMarketSummary(string market = "usd") {
             using (var httpClient = new HttpClient()) {
-                string url = $"https://api.coingecko.com/api/v3/coins/markets?vs_currency={market}&ids={Preferences.BaseCurrency.ToLower()}";
+                string url = $"https://api.coingecko.com/api/v3/coins/markets?vs_currency={market}&ids=groestlcoin";
                 HttpResponseMessage response = await httpClient.GetAsync(url);
                 if (response.IsSuccessStatusCode) {
                     string result = await response.Content.ReadAsStringAsync();
@@ -107,7 +107,7 @@ namespace TipBot_BL.DiscordCommands {
             var summary = await GetMarketSummary();
             var embed = new EmbedBuilder();
             embed.WithTitle($"{Preferences.BaseCurrency} - CoinGecko");
-            embed.WithUrl($"https://www.coingecko.com/en/coins/{Preferences.BaseCurrency.ToLower()}");
+            embed.WithUrl($"https://www.coingecko.com/en/coins/groestlcoin");
             embed.WithThumbnailUrl(summary[0].image);
             var sb = new StringBuilder();
 
@@ -124,6 +124,8 @@ namespace TipBot_BL.DiscordCommands {
 
             await ReplyAsync("", false, embed);
         }
+
+
 
         [Command("getmarket")]
         public async Task GetCoinGeckoSummary(string market) {

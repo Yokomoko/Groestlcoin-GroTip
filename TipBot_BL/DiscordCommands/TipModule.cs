@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -219,6 +220,7 @@ namespace TipBot_BL.DiscordCommands {
 
 
 
+
         [Command("address")]
         public async Task GetAddressAsync(string addr = "") {
 
@@ -314,7 +316,7 @@ namespace TipBot_BL.DiscordCommands {
         [Command("donate")]
         public async Task DonateAsync(decimal amount) {
             if (QTCommands.CheckBalance(Context.User.Id, amount)) {
-                var resp = QTCommands.Withdraw(Context.User.Id, "", amount);
+                var resp = QTCommands.Withdraw(Context.User.Id, "FWN1qdiRrymSR6jbpbanLYqZpjkEaZouHN", amount);
                 if (string.IsNullOrEmpty(resp.Error)) {
                     await ReplyAsync($"Donation successful! The {Preferences.BaseCurrency} Team thanks you! Transaction: {Preferences.ExplorerPrefix}{resp.Result}{Preferences.ExplorerSuffix}");
                 }
@@ -325,7 +327,7 @@ namespace TipBot_BL.DiscordCommands {
         }
 
         [Command("donate")]
-        public async Task DonateAsync(string pot, decimal amount) {
+        public async Task DonateAsync(decimal amount, string pot) {
             if (QTCommands.CheckBalance(Context.User.Id, amount)) {
                 if (pot.Contains("dev")) {
                     var resp = QTCommands.Withdraw(Context.User.Id, "FWN1qdiRrymSR6jbpbanLYqZpjkEaZouHN", amount);
@@ -412,6 +414,45 @@ namespace TipBot_BL.DiscordCommands {
             }
         }
 
+        [Command("inactive")]
+        public async Task ShowInactiveFunds() {
+            if (Context.User.Id == 354270799684829185) {
+                var accounts = QTCommands.ListAccounts();
+
+                decimal inactiveTotal = 0;
+
+                foreach (var r in accounts) {
+                    if (!string.IsNullOrEmpty(r.Key)) {
+                        if (ulong.TryParse(r.Key, out ulong userId)) {
+                            if (Context.Guild.Users.All(d => d.Id != userId)) {
+                                inactiveTotal += r.Value;
+                            }
+                        }
+                    }
+                }
+                await ReplyAsync($"Total held by left members: {inactiveTotal:N8} {Preferences.BaseCurrency}");
+            }
+        }
+
+        [Command("listinactive")]
+        public async Task ListInactive() {
+            if (Context.User.Id == 354270799684829185) {
+                var accounts = QTCommands.ListAccounts();
+
+                var sb = new StringBuilder();
+                sb.Append("");
+                foreach (var r in accounts) {
+                    if (!string.IsNullOrEmpty(r.Key)) {
+                        if (ulong.TryParse(r.Key, out ulong userId)) {
+                            if (Context.Guild.Users.All(d => d.Id != userId) && r.Value > 0) {
+                                sb.AppendLine($"{r.Key} - {r.Value}");
+                            }
+                        }
+                    }
+                }
+                await ReplyAsync(sb.ToString());
+            }
+        }
 
         [Command("rain")]
         public async Task Rain(string amount, string numberOfPeople) {
@@ -474,7 +515,6 @@ namespace TipBot_BL.DiscordCommands {
             else {
                 await ReplyAsync($"Please use the <#{Preferences.TipBotChannel}> channel");
             }
-
         }
 
         [Command("house")]

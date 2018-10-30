@@ -19,6 +19,15 @@ namespace TipBot_BL.QT {
         public string Error { get; set; }
     }
 
+    public class QtResponseMulti {
+        [JsonProperty(PropertyName = "id")]
+        public string Id { get; set; }
+        [JsonProperty(PropertyName = "result")]
+        public Dictionary<string, decimal> Result { get; set; }
+        [JsonProperty(PropertyName = "error")]
+        public string Error { get; set; }
+    }
+
     public class QTCommands {
 
         public static bool CheckBalance(ulong userId, decimal amount) {
@@ -112,6 +121,17 @@ namespace TipBot_BL.QT {
             catch {
                 return "Error getting your wallet. Please Contact Yokomoko.";
             }
+        }
+
+        public static Dictionary<string, decimal> ListAccounts() {
+            try {
+                var obj = GroestlJson.TipBotRequest("listaccounts", new List<string>());
+                return JsonConvert.DeserializeObject<QtResponseMulti>(obj).Result;
+            }
+            catch {
+                return null;
+            }
+
         }
     }
 }
